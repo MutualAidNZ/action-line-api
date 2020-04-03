@@ -5,6 +5,7 @@ import { expressJwtSecret } from 'jwks-rsa';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { ManagementClient } from 'auth0';
 
 import User, { USER_TYPES } from './models/User';
 import taskController from './controllers/task';
@@ -13,7 +14,14 @@ dotenv.config();
 
 const app = express();
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8000;
+
+const auth0 = new ManagementClient({
+  domain: process.env.AUTH0_MGMT_DOMAIN,
+  clientId: process.env.AUTH0_MGMT_CLIENT_ID,
+  clientSecret: process.env.AUTH0_MGMT_CLIENT_SECRET,
+  scope: 'read:users',
+});
 
 mongoose.connect(process.env.DATABASE_CONNECTION_STRING, {
   useNewUrlParser: true,
@@ -38,15 +46,16 @@ app.use(bodyParser.json());
 
 app.use(async (req, res, next) => {
   let user = await User.findOne({
-    identity: { sub: req.user.sub },
+    sub: req.user.sub,
   });
+
   if (!user) {
-    // TODO: Get info from Auth0
+    const profile = await auth0.getUser({ id: req.user.sub });
+
     user = await User.create({
-      identity: {
-        sub: req.user.sub,
-      },
+      sub: req.user.sub,
       type: USER_TYPES.COORDINATOR,
+      profile,
     });
   }
 
@@ -58,4 +67,4 @@ app.use(async (req, res, next) => {
 
 app.use('/tasks', taskController);
 
-app.listen(port, () => console.log('listening'));
+app.listen(port, () => console.log('listening', port));

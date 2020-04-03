@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export const STATUSES = {
+export const TASK_STATUSES = {
   CREATED: 'CREATED',
   INVALID: 'INVALID',
   NEEDS_VALIDATION: 'NEEDS_VALIDATION',
@@ -29,8 +29,8 @@ const TaskSchema = new Schema(
     ],
     status: {
       type: String,
-      enum: Object.keys(STATUSES),
-      default: STATUSES.CREATED,
+      enum: Object.keys(TASK_STATUSES),
+      default: TASK_STATUSES.CREATED,
     },
     location: [
       {
@@ -74,6 +74,25 @@ const TaskSchema = new Schema(
           body: {
             type: String,
             required: true,
+          },
+          user: {
+            type: Schema.ObjectId,
+            ref: 'User',
+          },
+        },
+        { timestamps: true }
+      ),
+    ],
+    log: [
+      new Schema(
+        {
+          body: {
+            type: String,
+            required: true,
+          },
+          actor: {
+            type: Schema.ObjectId,
+            ref: 'User',
           },
           user: {
             type: Schema.ObjectId,

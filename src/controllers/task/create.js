@@ -14,7 +14,6 @@ export default async function createTaskController(req, res) {
   const { requester, body, title } = req.body;
 
   const geocodeResult = await geocode(requester.postcode);
-  console.log(geocodeResult);
   const locationIds = [];
 
   try {

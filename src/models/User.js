@@ -9,14 +9,12 @@ export const USER_TYPES = {
 
 const UserSchema = new Schema(
   {
-    identity: {
-      sub: {
-        type: String,
-        required: true,
-      },
-      profile: {
-        type: Object,
-      },
+    sub: {
+      type: String,
+      required: true,
+    },
+    profile: {
+      type: Object,
     },
     type: {
       type: String,
