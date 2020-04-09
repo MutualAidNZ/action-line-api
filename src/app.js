@@ -9,6 +9,8 @@ import { ManagementClient } from 'auth0';
 
 import User, { USER_TYPES } from './models/User';
 import taskController from './controllers/task';
+import communityController from './controllers/community';
+import logger from './services/logger';
 
 dotenv.config();
 
@@ -40,11 +42,13 @@ const jwtCheck = jwt({
   algorithms: ['RS256'],
 });
 
-app.use(cors({ origin: ['http://localhost:3001', 'http://localhost:3000'] }));
-app.use(jwtCheck);
-app.use(bodyParser.json());
+const ensureUser = async (req, res, next) => {
+  if (req.user.gty === 'client-credentials') {
+    console.log(`Request from M2M application (${req.user.gty})...`);
+    req._user = req.user;
+    return next();
+  }
 
-app.use(async (req, res, next) => {
   let user = await User.findOne({
     sub: req.user.sub,
   });
@@ -63,8 +67,29 @@ app.use(async (req, res, next) => {
   req.user = user;
 
   next();
+};
+
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3001',
+      'http://localhost:3000',
+      'https://alpha.aroha.mutualaid.org.nz',
+    ],
+  })
+);
+
+app.use(bodyParser.json());
+
+app.get('/', (req, res) => {
+  return res.send({});
 });
 
-app.use('/tasks', taskController);
+app.use('/tasks', jwtCheck, ensureUser, taskController);
+app.use('/communities', jwtCheck, ensureUser, communityController);
+
+app.get('/health', (req, res) => {
+  return res.send({ status: 'OK' });
+});
 
 app.listen(port, () => console.log('listening', port));

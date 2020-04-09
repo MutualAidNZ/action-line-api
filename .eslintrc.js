@@ -39,6 +39,7 @@ module.exports = {
     'consistent-return': 'off',
     'import/no-cycle': 'off',
     'max-len': ['error', { code: 140 }],
+    'no-underscore-dangle': 'off'
   },
 
   parserOptions: {

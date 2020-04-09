@@ -1,15 +1,17 @@
 import Task from '../../models/Task';
-import { USER_TYPES } from '../../models/User';
 
 export default async function viewTaskController(req, res) {
-  const { type } = req.user;
   const { id } = req.params;
 
   try {
     const task = await Task.findById(id)
-      .populate('location')
+      .populate('community')
       .populate('assignee')
       .exec();
+
+    if (!task) {
+      return res.status(404).send();
+    }
 
     return res.send({
       isAssignedToMe: task.assignee

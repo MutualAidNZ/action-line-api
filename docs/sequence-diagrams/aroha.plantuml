@@ -1,0 +1,45 @@
+@startuml ArohaLogicalFlow
+
+participant EndUser
+participant CoOrdinator
+participant Volunteer
+
+EndUser <-> ActionLine: Person calls freephone,\nleaves details +\nrequest on automated service
+ActionLine -> Twilio: Twilio's AI transcribes person's details + request
+Twilio -> Aroha: Twilio sends request to our service
+Aroha -> Aroha: Create request in backend system
+Aroha -> Aroha: Request is automatically\nassigned to the Location\ngathered from the postcode
+
+... (Wait for request to be triaged) ...
+
+group A Co-Ordinator is assigned to a Location and can manage tickets
+
+group What if the request is unclear?
+CoOrdinator <-> EndUser: Call to discuss requirement
+CoOrdinator -> Aroha: Update request if required
+Aroha -> Aroha: Save request
+end
+
+CoOrdinator -> Aroha: Set request as AVAILABLE and sets priority
+Aroha -> Aroha: Update request
+end
+
+... (Wait for available volunteer) ...
+
+group Volunteer finds request
+Volunteer -> Aroha: What requests are available?
+Aroha -> Volunteer: Show list of available requests
+Volunteer -> Volunteer: Decide on list of requests
+Volunteer -> Aroha: I want to work on this request
+Aroha --> CoOrdinator: Email with assigned request details
+Aroha -> Aroha: Sets Volunteer as assignee
+end
+
+group Volunteer works on request
+Volunteer <-> EndUser: Work to fulfil request
+Volunteer -> Aroha: I have completed the request
+Aroha -> Aroha: Update request
+Aroha --> CoOrdinator: Email with completed request details
+end
+
+@enduml

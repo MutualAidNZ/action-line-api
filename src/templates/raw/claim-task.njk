@@ -1,0 +1,22 @@
+{% extends "root.html.njk" %}
+
+{% block content %}
+  <tr>
+    <td class="content-block">
+      <p>Kia ora,
+        {{user.profile.name}}!</p>
+      <p>
+        You have claimed the task "{{task.title}}". It is now your responsibility to fulfil.
+      </p>
+      <p>If you have any problems doing this, please let your area co-ordinator know.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p>Thank you,<br/>
+        <strong>The Aroha Network</strong>
+      </p>
+    </td>
+  </tr>
+
+{% endblock %}

@@ -3,8 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 export const TASK_STATUSES = {
   CREATED: 'CREATED',
   INVALID: 'INVALID',
-  NEEDS_VALIDATION: 'NEEDS_VALIDATION',
-  AWAITING_VOLUNTEER: 'AWAITING_VOLUNTEER',
+  READY: 'READY',
   IN_PROGRESS: 'IN_PROGRESS',
   CLOSED_SUCCESS: 'CLOSED_SUCCESS',
   CLOSED_FAILED: 'CLOSED_FAILED',
@@ -14,6 +13,10 @@ export const TASK_STATUSES = {
 const TaskSchema = new Schema(
   {
     title: {
+      type: String,
+      required: true,
+    },
+    slug: {
       type: String,
       required: true,
     },
@@ -32,15 +35,16 @@ const TaskSchema = new Schema(
       enum: Object.keys(TASK_STATUSES),
       default: TASK_STATUSES.CREATED,
     },
-    location: [
+    community: [
       {
         type: Schema.ObjectId,
-        ref: 'Location',
+        ref: 'Community',
       },
     ],
     tag: [
       {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'Tag',
       },
     ],
     requester: {
@@ -105,10 +109,6 @@ const TaskSchema = new Schema(
   },
   { timestamps: true }
 );
-
-TaskSchema.query.byLocation = function findByLocation(locationIdArray) {
-  return this.where({ location: { $in: locationIdArray } });
-};
 
 const Task = mongoose.model('Task', TaskSchema);
 

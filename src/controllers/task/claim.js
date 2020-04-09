@@ -1,4 +1,8 @@
 import Task, { TASK_STATUSES } from '../../models/Task';
+import { sendTemplatedEmail } from '../../services/email';
+import logger from '../../services/logger';
+
+const log = logger.child({ module: 'claimTaskController' });
 
 export default async function claimTaskController(req, res) {
   const { user } = req;
@@ -24,6 +28,19 @@ export default async function claimTaskController(req, res) {
     });
 
     await task.save();
+
+    // Send a confirmation email to the volunteer
+    await sendTemplatedEmail({
+      templateName: 'claim-task',
+      email: user.profile.email,
+      subject: `You have claimed a request - "${task.title}"`,
+      data: {
+        task,
+        user,
+      },
+    });
+
+    // TODO: Notify co-ordinator - digest?
 
     return res.send(task);
   } catch (e) {

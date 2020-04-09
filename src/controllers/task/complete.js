@@ -1,4 +1,5 @@
 import Task, { TASK_STATUSES } from '../../models/Task';
+import { sendTemplatedEmail } from '../../services/email';
 
 export default async function completeTaskController(req, res) {
   const { user } = req;
@@ -23,6 +24,19 @@ export default async function completeTaskController(req, res) {
     });
 
     await task.save();
+
+    // Send a confirmation email to the volunteer
+    await sendTemplatedEmail({
+      templateName: 'complete-task',
+      email: user.profile.email,
+      subject: `You have completed a request - "${task.title}"`,
+      data: {
+        task,
+        user,
+      },
+    });
+
+    // TODO: Notify co-ordinator - digest?
 
     return res.send(task);
   } catch (e) {

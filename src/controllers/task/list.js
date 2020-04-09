@@ -8,7 +8,7 @@ async function getMyTasks(req) {
     assignee: { $in: req.user._id },
   })
     .select(select)
-    .populate('location', '_id type name')
+    .populate('community', '_id type name')
     .exec();
 
   return tasks;
@@ -18,7 +18,7 @@ export default async function listTasksController(req, res) {
   const { type } = req.user;
 
   let query = {
-    status: { $in: [TASK_STATUSES.CREATED] },
+    status: { $in: [TASK_STATUSES.READY] },
   };
 
   switch (type) {
@@ -26,11 +26,13 @@ export default async function listTasksController(req, res) {
       query = query;
       break;
     case USER_TYPES.COORDINATOR:
+      query = {
+        community: { $in: req.user.communities },
+      };
     case USER_TYPES.VOLUNTEER:
       query = {
         ...query,
-        location: { $in: req.user.locations },
-        assignee: { $nin: req.user._id },
+        community: { $in: req.user.communities },
       };
       break;
   }
@@ -39,12 +41,13 @@ export default async function listTasksController(req, res) {
     const myTasks = await getMyTasks(req);
     const tasks = await Task.where(query)
       .select(select)
-      .populate('location', '_id type name')
+      .populate('community', '_id type name')
       .exec();
 
     return res.send({
       myTasks,
       tasks,
+      role: type,
     });
   } catch (e) {
     console.error(e);

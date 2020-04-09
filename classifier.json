@@ -1,0 +1,1 @@
+{"classifier":{"classFeatures":{"Groceries":{"0":2,"1":2,"2":2}},"classTotals":{"Groceries":2},"totalExamples":2,"smoothing":1},"docs":[{"label":"Groceries","text":["need","help","groceri"]}],"features":{"need":1,"help":1,"groceri":1},"stemmer":{},"lastAdded":1,"events":{"_events":{},"_eventsCount":0}}

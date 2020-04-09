@@ -1,0 +1,21 @@
+{% extends "root.html.njk" %}
+
+{% block content %}
+  <tr>
+    <td class="content-block">
+      <p>Kia ora,
+        {{user.profile.name}}!</p>
+      <p>
+        This email confirms that you have completed "{{task.title}}". Thank you so much for your help.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p>Thank you,<br/>
+        <strong>The Aroha Network</strong>
+      </p>
+    </td>
+  </tr>
+
+{% endblock %}

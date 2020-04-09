@@ -1,21 +1,24 @@
-FROM node:12
+### BUILD -------------------------------------
+FROM node:12-alpine AS build
+RUN apk add --update --no-cache \
+    python \
+    make \
+    g++
+    
+COPY . /src
+WORKDIR /src
 
-# Create app directory
-WORKDIR /usr/src/app
+RUN npm ci
+RUN npm run build
+RUN npm prune --production
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+### RUNTIME ------------------------------------
+FROM node:12-alpine
+USER node
 
-RUN npm install
+WORKDIR /opt/app
+COPY --from=build /src/node_modules node_modules
+COPY --from=build /src/dist .
 
-# Bundle app source
-COPY . .
-
-# Build app
-RUN ["npm", "run-script", "build"]
-
-EXPOSE 8080
-
-CMD [ "node", "dist/app.js" ]
+EXPOSE 8000
+CMD ["node", "app.js"]

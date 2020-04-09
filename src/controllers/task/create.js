@@ -1,6 +1,7 @@
-import Location, { LOCATION_TYPES } from '../../models/Location';
+import slugify from 'slugify';
 import Task from '../../models/Task';
 import { geocode } from '../../services/here';
+import Community from '../../models/Community';
 
 /**
  * Create task controller
@@ -20,7 +21,8 @@ export default async function createTaskController(req, res) {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(geocodeResult)) {
       if (value) {
-        let location = await Location.findOne({ type: key, name: value });
+        // eslint-disable-next-line no-await-in-loop
+        let location = await Community.findOne({ type: key, name: value });
         if (!location) {
           let parent;
 
@@ -53,7 +55,13 @@ export default async function createTaskController(req, res) {
           //     break;
           // }
 
-          location = await Location.create({ type: key, name: value, parent });
+          // eslint-disable-next-line no-await-in-loop
+          location = await Community.create({
+            type: key,
+            name: value,
+            parent,
+            slug: slugify(value),
+          });
         }
 
         // eslint-disable-next-line no-underscore-dangle
@@ -63,9 +71,15 @@ export default async function createTaskController(req, res) {
 
     const task = await Task.create({
       requester,
+      slug: slugify(title),
       title,
       body,
-      location: locationIds,
+      community: locationIds,
+      log: [
+        {
+          body: 'Created request.',
+        },
+      ],
     });
 
     return res.send(task);

@@ -22,7 +22,7 @@ const UserSchema = new Schema(
       required: true,
     },
     tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
-    locations: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
+    communities: [{ type: Schema.Types.ObjectId, ref: 'Community' }],
   },
   { timestamps: true }
 );

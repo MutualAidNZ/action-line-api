@@ -1,5 +1,5 @@
 import { create } from 'axios';
-import { LOCATION_TYPES } from '../models/Location';
+import { COMMUNITY_TYPES } from '../models/Community';
 
 const instance = create({
   baseURL:
@@ -7,6 +7,7 @@ const instance = create({
   timeout: 5000,
 });
 
+// eslint-disable-next-line import/prefer-default-export
 export async function geocode(input) {
   try {
     const geocodeResult = await instance.get(
@@ -14,16 +15,15 @@ export async function geocode(input) {
     );
 
     const { address } = geocodeResult.data.items[0];
-    console.log(address);
 
     return {
-      [LOCATION_TYPES.CITY]: address.city,
-      [LOCATION_TYPES.COUNTRY]: address.countryName,
-      [LOCATION_TYPES.COUNTY]: address.county,
-      [LOCATION_TYPES.DISTRICT]: address.district,
-      [LOCATION_TYPES.POSTAL_CODE]: address.postalCode,
-      [LOCATION_TYPES.STATE]: address.state,
-      [LOCATION_TYPES.STREET]: address.street,
+      [COMMUNITY_TYPES.CITY]: address.city,
+      [COMMUNITY_TYPES.COUNTRY]: address.countryName,
+      [COMMUNITY_TYPES.COUNTY]: address.county,
+      [COMMUNITY_TYPES.DISTRICT]: address.district,
+      [COMMUNITY_TYPES.POSTAL_CODE]: address.postalCode,
+      [COMMUNITY_TYPES.STATE]: address.state,
+      [COMMUNITY_TYPES.STREET]: address.street,
     };
   } catch (e) {
     // console.error('Geocode error', e);
