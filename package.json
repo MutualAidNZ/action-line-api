@@ -45,7 +45,7 @@
     "express-jwt": "^5.3.1",
     "jwks-rsa": "^1.7.0",
     "mailgun-js": "^0.22.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.9.6",
     "mongoose-crudify": "^0.2.0",
     "natural": "^0.6.3",
